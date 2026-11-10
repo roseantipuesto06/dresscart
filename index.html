@@ -1,0 +1,417 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DressCart Online Dress Shopping</title>
+
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #faf7f6;
+  color: #333;
+}
+header {
+  background: white;
+  padding: 16px 6%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-bottom: 1px solid #eee0de;
+}
+.logo { color: #df727d; font-size: 25px; font-weight: bold; }
+nav { display: flex; gap: 8px; flex-wrap: wrap; }
+button { cursor: pointer; font: inherit; }
+nav button, .secondary {
+  padding: 10px 14px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+.primary {
+  background: #df727d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 12px 16px;
+}
+.primary:hover { background: #c95765; }
+main { max-width: 1050px; margin: 28px auto; padding: 0 18px 40px; }
+.panel {
+  background: white;
+  padding: 24px;
+  border: 1px solid #eee0de;
+  border-radius: 9px;
+  margin-bottom: 20px;
+}
+.auth { max-width: 390px; margin: 35px auto; text-align: center; }
+.field { margin: 15px 0; text-align: left; }
+label { display: block; font-size: 14px; margin-bottom: 6px; }
+input, select {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: white;
+}
+.full { width: 100%; }
+.tabs { display: flex; gap: 8px; margin: 20px 0; }
+.tabs button { flex: 1; padding: 11px; border: 0; }
+.active { background: #f6dadd; }
+.hero {
+  padding: 30px;
+  background: #f9e8e5;
+  border-radius: 9px;
+  margin-bottom: 28px;
+}
+.hero h1 { font-size: 36px; margin-bottom: 8px; }
+.muted { color: #777; font-size: 14px; line-height: 1.5; }
+.toolbar { display: flex; gap: 10px; margin: 18px 0; }
+.toolbar input { flex: 1; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 18px;
+}
+.product {
+  background: white;
+  border: 1px solid #eee0de;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.product img {
+  display: block;
+  width: 100%;
+  height: 230px;
+  object-fit: cover;
+  background: #eee;
+}
+.product-info { padding: 14px; }
+.price { color: #bd4d5b; font-weight: bold; }
+.actions { display: flex; gap: 7px; }
+.actions button { flex: 1; padding: 9px 5px; }
+.detail {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+}
+.detail img {
+  width: 100%;
+  max-height: 440px;
+  object-fit: cover;
+  border-radius: 7px;
+}
+.choices { display: flex; gap: 8px; flex-wrap: wrap; }
+.choices button {
+  background: white;
+  border: 1px solid #ccc;
+  padding: 9px 14px;
+  border-radius: 4px;
+}
+.choices button.selected { border: 2px solid #df727d; background: #fff0f1; }
+.swatch {
+  width: 30px;
+  height: 30px;
+  padding: 0 !important;
+  border-radius: 50% !important;
+}
+.qty { display: flex; align-items: center; gap: 12px; margin: 18px 0; }
+.cart-row {
+  display: grid;
+  grid-template-columns: 90px 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid #eee;
+}
+.cart-row img { width: 90px; height: 100px; object-fit: cover; }
+.cart-row input { max-width: 75px; }
+.summary { border-top: 1px solid #ddd; padding-top: 16px; margin-top: 18px; }
+.total { display: flex; justify-content: space-between; margin: 15px 0; }
+.steps { display: flex; gap: 7px; margin-bottom: 20px; }
+.steps span { flex: 1; text-align: center; background: #eee; padding: 10px 3px; font-size: 12px; }
+.steps .active { background: #f4cbd0; }
+.success { text-align: center; max-width: 500px; margin: 40px auto; }
+.check {
+  margin: 0 auto 20px;
+  width: 75px; height: 75px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: #459b71;
+  color: white;
+  font-size: 42px;
+}
+footer { text-align: center; padding: 20px; color: #777; font-size: 13px; }
+@media(max-width: 500px) {
+  main { padding: 0 12px 30px; }
+  .hero h1 { font-size: 28px; }
+  .panel { padding: 16px; }
+  .cart-row { grid-template-columns: 65px 1fr; }
+  .cart-row img { width: 65px; height: 80px; }
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="logo">DressCart ♡</div>
+  <nav>
+    <button onclick="home()">Home</button>
+    <button onclick="cartPage()">🛒 Cart (<span id="count">0</span>)</button>
+    <button id="account" onclick="authPage()">Login / Register</button>
+  </nav>
+</header>
+
+<main id="app"></main>
+<footer>DressCart Online Dress Shopping · Find your style ♡</footer>
+
+<script>
+const dresses = [
+  {id:1,name:"Mini Dress",price:250,category:"Casual",
+   image:"https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=700&q=80",
+   description:"A cute and comfortable dress for everyday wear."},
+  {id:2,name:"Summer Dress",price:350,category:"Summer",
+   image:"https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=700&q=80",
+   description:"A lightweight dress for sunny days and outings."},
+  {id:3,name:"Floral Dress",price:300,category:"Floral",
+   image:"https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=700&q=80",
+   description:"A pretty floral dress for a soft feminine look."},
+  {id:4,name:"Tube Dress",price:280,category:"Party",
+   image:"https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=700&q=80",
+   description:"A stylish dress for parties and special occasions."}
+];
+
+const app = document.getElementById("app");
+let cart = JSON.parse(localStorage.getItem("dcCart") || "[]");
+let user = JSON.parse(localStorage.getItem("dcUser") || "null");
+let users = JSON.parse(localStorage.getItem("dcUsers") || "[]");
+let chosen = dresses[1], size = "M", color = "Black", qty = 1;
+let mode = "login", lastOrder = null;
+
+function peso(n) {
+  return "₱" + n.toLocaleString("en-PH", {minimumFractionDigits:2});
+}
+function update() {
+  document.getElementById("count").textContent =
+    cart.reduce((s,i) => s + i.qty, 0);
+  localStorage.setItem("dcCart", JSON.stringify(cart));
+  document.getElementById("account").textContent = user ? "Logout" : "Login / Register";
+  document.getElementById("account").onclick = user ? logout : authPage;
+}
+function home() {
+  app.innerHTML = `
+    <section class="hero">
+      <p>WELCOME TO DRESSCART</p>
+      <h1>Find your perfect dress ♡</h1>
+      <p>Affordable dresses for every style and occasion.</p>
+      <button class="primary" onclick="document.getElementById('catalog').scrollIntoView()">Shop Now</button>
+    </section>
+    <section id="catalog">
+      <h2>Our Dress Collection</h2>
+      <p class="muted">Choose your favorite dress.</p>
+      <div class="toolbar">
+        <input id="search" placeholder="Search dress..." oninput="filter()">
+        <select id="category" onchange="filter()">
+          <option>All</option><option>Casual</option>
+          <option>Summer</option><option>Floral</option><option>Party</option>
+        </select>
+      </div>
+      <div class="grid" id="products"></div>
+    </section>`;
+  filter();
+  update();
+}
+function filter() {
+  const q = (document.getElementById("search")?.value || "").toLowerCase();
+  const c = document.getElementById("category")?.value || "All";
+  const list = dresses.filter(d =>
+    d.name.toLowerCase().includes(q) && (c === "All" || d.category === c));
+  document.getElementById("products").innerHTML = list.length ? list.map(d => `
+    <article class="product">
+      <img src="${d.image}" alt="${d.name}" onerror="this.style.display='none'">
+      <div class="product-info">
+        <h3>${d.name}</h3><p class="muted">${d.category}</p>
+        <p class="price">${peso(d.price)}</p>
+        <div class="actions">
+          <button class="secondary" onclick="details(${d.id})">Details</button>
+          <button class="primary" onclick="quickAdd(${d.id})">Add to Cart</button>
+        </div>
+      </div>
+    </article>`).join("") : "<p>No dresses found.</p>";
+}
+function details(id) {
+  chosen = dresses.find(d => d.id === id);
+  size = "M"; color = "Black"; qty = 1;
+  detailPage();
+}
+function detailPage() {
+  app.innerHTML = `
+    <button class="secondary" onclick="home()">← Back</button>
+    <section class="panel detail" style="margin-top:18px">
+      <img src="${chosen.image}" alt="${chosen.name}" onerror="this.style.display='none'">
+      <div>
+        <h1>${chosen.name}</h1>
+        <p class="price">${peso(chosen.price)}</p>
+        <p>${chosen.description}</p>
+        <h3>Size</h3>
+        <div class="choices">
+          ${["S","M","L","XL"].map(s=>`<button class="${s===size?'selected':''}" onclick="size='${s}';detailPage()">${s}</button>`).join("")}
+        </div>
+        <h3 style="margin-top:20px">Color</h3>
+        <div class="choices">
+          ${[["Black","#333"],["Pink","#ed8c9a"],["White","#eee"]].map(c=>`<button class="swatch ${c[0]===color?'selected':''}" title="${c[0]}" style="background:${c[1]}" onclick="color='${c[0]}';detailPage()"></button>`).join("")}
+        </div>
+        <p>Selected color: ${color}</p>
+        <div class="qty">
+          Quantity
+          <button class="secondary" onclick="qty=Math.max(1,qty-1);detailPage()">−</button>
+          <strong>${qty}</strong>
+          <button class="secondary" onclick="qty=Math.min(20,qty+1);detailPage()">+</button>
+        </div>
+        <button class="primary full" onclick="add()">ADD TO CART</button>
+      </div>
+    </section>`;
+}
+function quickAdd(id) {
+  chosen = dresses.find(d=>d.id===id);
+  size="M"; color="Black"; qty=1; add();
+}
+function add() {
+  const old = cart.find(i=>i.id===chosen.id && i.size===size && i.color===color);
+  if(old) old.qty=Math.min(20,old.qty+qty);
+  else cart.push({id:chosen.id,size,color,qty});
+  update(); cartPage();
+}
+function cartPage() {
+  app.innerHTML = `<h1>Your Cart</h1><section class="panel">
+    ${cart.length ? cart.map((i,n)=>{
+      const d=dresses.find(x=>x.id===i.id);
+      return `<div class="cart-row">
+        <img src="${d.image}" alt="${d.name}">
+        <div><h3>${d.name}</h3><p class="muted">Size: ${i.size} · Color: ${i.color}</p>
+        <p class="price">${peso(d.price)}</p><label>Quantity</label>
+        <input type="number" min="1" max="20" value="${i.qty}" onchange="changeQty(${n},this.value)"></div>
+        <button class="secondary" onclick="removeItem(${n})">Remove</button>
+      </div>`;
+    }).join("") : "<p>Your cart is empty.</p>"}
+    <div class="summary"><div class="total"><strong>Total</strong><strong>${peso(total())}</strong></div>
+    <button class="primary full" ${cart.length?"":"disabled"} onclick="checkout()">Proceed to Checkout</button>
+    <button class="secondary full" style="margin-top:10px" onclick="home()">Continue Shopping</button>
+    </div></section>`;
+  update();
+}
+function total() {
+  return cart.reduce((s,i)=>s+dresses.find(d=>d.id===i.id).price*i.qty,0);
+}
+function changeQty(n,v) {
+  const q=Number(v);
+  if(!Number.isInteger(q)||q<1||q>20) return alert("Enter a quantity from 1 to 20.");
+  cart[n].qty=q; cartPage();
+}
+function removeItem(n) { cart.splice(n,1); cartPage(); }
+function authPage(m="login") {
+  mode=m;
+  app.innerHTML=`<section class="panel auth">
+    <div class="logo">DressCart ♡</div>
+    <p class="muted">Online Dress Shopping</p>
+    <div class="tabs">
+      <button class="${mode==="login"?"active":""}" onclick="authPage('login')">Login</button>
+      <button class="${mode==="register"?"active":""}" onclick="authPage('register')">Register</button>
+    </div>
+    <form onsubmit="authenticate(event)">
+      ${mode==="register"?'<div class="field"><label>Full Name</label><input id="name" required maxlength="80"></div>':""}
+      <div class="field"><label>Email</label><input id="email" type="email" required></div>
+      <div class="field"><label>Password</label><input id="password" type="password" minlength="6" required></div>
+      <button class="primary full">${mode==="login"?"Login":"Create Account"}</button>
+    </form>
+    <p class="muted">Demo only. Do not use a real password.</p>
+    <button class="secondary full" onclick="home()">Continue Shopping</button>
+  </section>`;
+}
+function authenticate(e) {
+  e.preventDefault();
+  const email=document.getElementById("email").value.trim().toLowerCase();
+  const password=document.getElementById("password").value;
+  if(mode==="register") {
+    const name=document.getElementById("name").value.trim();
+    if(users.some(u=>u.email===email)) return alert("Email already registered. Please log in.");
+    users.push({name,email,password});
+    localStorage.setItem("dcUsers",JSON.stringify(users));
+    user={name,email};
+  } else {
+    const found=users.find(u=>u.email===email&&u.password===password);
+    if(!found) return alert("Account not found or incorrect password.");
+    user={name:found.name,email:found.email};
+  }
+  localStorage.setItem("dcUser",JSON.stringify(user));
+  update(); home();
+}
+function logout() {
+  user=null; localStorage.removeItem("dcUser"); home();
+}
+function checkout() {
+  if(!cart.length) return;
+  app.innerHTML=`<h1>Checkout</h1>
+    <div class="steps"><span>1. Cart</span><span class="active">2. Shipping</span><span>3. Confirmed</span></div>
+    <section class="panel"><h2>Shipping Information</h2>
+    <form onsubmit="placeOrder(event)">
+      <div class="field"><label>Full Name</label><input id="shipName" required value="${user?user.name:""}"></div>
+      <div class="field"><label>Email</label><input id="shipEmail" type="email" required value="${user?user.email:""}"></div>
+      <div class="field"><label>Address</label><input id="address" required placeholder="House number, street, city"></div>
+      <div class="field"><label>Phone Number</label><input id="phone" type="tel" required placeholder="09XXXXXXXXX"></div>
+      <h3>Payment Method</h3>
+      <label><input style="width:auto" type="radio" name="payment" value="Cash on Delivery" checked> Cash on Delivery</label>
+      <label><input style="width:auto" type="radio" name="payment" value="Bank Transfer"> Bank Transfer</label>
+      <div class="summary"><div class="total"><strong>Total</strong><strong>${peso(total())}</strong></div>
+      <button class="primary full">Place Order</button>
+      <button type="button" class="secondary full" style="margin-top:10px" onclick="cartPage()">Back to Cart</button></div>
+    </form></section>`;
+}
+function placeOrder(e) {
+  e.preventDefault();
+  if(!cart.length) return alert("Your cart is empty.");
+  lastOrder={
+    number:"DC"+Date.now().toString().slice(-8),
+    name:document.getElementById("shipName").value.trim(),
+    email:document.getElementById("shipEmail").value.trim(),
+    address:document.getElementById("address").value.trim(),
+    phone:document.getElementById("phone").value.trim(),
+    payment:document.querySelector('input[name="payment"]:checked').value,
+    items:[...cart], total:total(), date:new Date().toLocaleString()
+  };
+  const orders=JSON.parse(localStorage.getItem("dcOrders")||"[]");
+  orders.push(lastOrder);
+  localStorage.setItem("dcOrders",JSON.stringify(orders));
+  cart=[]; update(); confirmation();
+}
+function confirmation() {
+  app.innerHTML=`<section class="panel success">
+    <div class="check">✓</div><h1>Order Confirmed!</h1>
+    <p>Thank you for shopping at DressCart.</p>
+    <p>Your demo order has been saved in this browser.</p>
+    <p><strong>Order Number: ${lastOrder.number}</strong></p>
+    <p><strong>Total: ${peso(lastOrder.total)}</strong></p>
+    <p>Payment: ${lastOrder.payment}</p>
+    <p class="muted">No real payment or delivery has been arranged.</p>
+    <button class="primary full" onclick="home()">Back to Home</button>
+    <button class="secondary full" style="margin-top:10px" onclick="historyPage()">Order History</button>
+  </section>`;
+}
+function historyPage() {
+  const orders=JSON.parse(localStorage.getItem("dcOrders")||"[]");
+  const mine=user?orders.filter(o=>o.email===user.email):[];
+  app.innerHTML=`<h1>My Orders</h1><section class="panel">
+    ${mine.length?mine.slice().reverse().map(o=>`<p><strong>${o.number}</strong> · ${peso(o.total)} · ${o.date}</p>`).join(""):"<p>No orders found for this account.</p>"}
+    <button class="primary full" onclick="home()">Back to Home</button>
+  </section>`;
+}
+update();
+home();
+</script>
+</body>
+</html>
